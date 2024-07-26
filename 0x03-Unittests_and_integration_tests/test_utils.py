@@ -4,10 +4,9 @@ function works well as expected.
 Also decorarte the test class with the parameterized decorator
 to test multiple cases.
 """
-
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map, get_json, memoize
+from utils import access_nested_map
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -20,18 +19,17 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map(self, nested_map, path, expected):
         self.assertEqual(access_nested_map(nested_map, path), expected)
-
-    @parameterized.expand([
-        ({}, ("a",), "KeyError: 'a'"),
-        ({"a": 1}, ("a", "b"), "KeyError: 'b'")
-    ])
-    def test_access_nested_map_exception(self, nested_map,
-                                         path, expected_message):
         """ Test the access of nested_map.
         """
+
+    @parameterized.expand([
+        ({}, ("a",), 'a'),
+        ({"a": 1}, ("a", "b"), 'b')
+    ])
+    def test_access_nested_map_exception(self, nested_map, path, expected_key):
         with self.assertRaises(KeyError) as cm:
-            access_nested_map(access_nested_map, path)
-        self.assertEqual(str(cm.exception), expected_message)
+            access_nested_map(nested_map, path)
+        self.assertEqual(str(cm.exception), repr(expected_key))
 
 
 if __name__ == "__main__":
